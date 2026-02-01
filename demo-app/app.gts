@@ -4,7 +4,7 @@ import PageTitleService from 'ember-page-title/services/page-title';
 
 class Router extends EmberRouter {
   location = 'history';
-  rootURL = '/';
+  rootURL = import.meta.env.BASE_URL ?? '/';
 }
 
 export class App extends EmberApp {

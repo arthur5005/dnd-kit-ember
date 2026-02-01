@@ -1,6 +1,7 @@
 {
   "name": "@arthur5005/dnd-kit-ember",
   "version": "0.1.1",
+  "packageManager": "pnpm@10.11.1",
   "description": "Ember addon for drag and drop powered by @dnd-kit/dom",
   "keywords": [
     "ember-addon"

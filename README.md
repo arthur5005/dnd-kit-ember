@@ -2,12 +2,14 @@
 
 An Ember addon providing drag and drop functionality powered by [@dnd-kit/dom](https://next.dndkit.com/overview).
 
+**[Live Demo](https://arthur5005.github.io/dnd-kit-ember/)**
+
 > **Early Development Warning**: This is an experimental addon with no tests. It is intended as an exploration for replacing [ember-sortable](https://github.com/adopted-ember-addons/ember-sortable). The API is subject to change. Use at your own risk.
 
 ## Installation
 
 ```bash
-pnpm add dnd-kit-ember
+pnpm add @arthur5005/dnd-kit-ember
 ```
 
 ## Requirements
@@ -18,28 +20,89 @@ pnpm add dnd-kit-ember
 
 ## Usage
 
-### Basic Sortable List
+### Draggable and Droppable
 
 ```gts
-import Component from '@glimmer/component';
-import { tracked } from '@glimmer/tracking';
-import DragDrop from 'dnd-kit-ember/components/drag-drop';
-import { move } from '@dnd-kit/helpers';
-import type { DragDropEvents } from 'dnd-kit-ember';
-
-class State {
-  @tracked items = ['Item 1', 'Item 2', 'Item 3', 'Item 4'];
-}
-
-const state = new State();
+import DragDrop from '@arthur5005/dnd-kit-ember/components/drag-drop';
+import type { DragDropEvents } from '@arthur5005/dnd-kit-ember';
 
 function handleDragEnd(event: Parameters<DragDropEvents['dragend']>[0]) {
   if (event.canceled) return;
-  state.items = move(state.items, event);
+
+  const sourceId = event.operation.source?.id;
+  const targetId = event.operation.target?.id;
+  // Handle the drop
 }
 
 <template>
   <DragDrop @onDragEnd={{handleDragEnd}} as |dd|>
+    <div {{dd.draggable id="item-1"}}>
+      Drag me
+    </div>
+
+    <div {{dd.droppable id="drop-zone"}}>
+      Drop here
+    </div>
+  </DragDrop>
+</template>
+```
+
+### Type-Restricted Drop Zones
+
+```gts
+<DragDrop @onDragEnd={{handleDragEnd}} as |dd|>
+  <div {{dd.draggable id="circle-1" type="circle"}}>Circle</div>
+  <div {{dd.draggable id="square-1" type="square"}}>Square</div>
+
+  <div {{dd.droppable id="circles-only" accept="circle"}}>
+    Only accepts circles
+  </div>
+</DragDrop>
+```
+
+### Sortable List
+
+The `sortable` modifier combines draggable and droppable behavior for reorderable lists.
+
+> **Note**: dnd-kit's sortable is an **optimistic sorter** - items visually reorder as you drag over them. You must handle `@onDragStart`, `@onDragOver`, and `@onDragEnd` to maintain state and support cancellation (e.g., pressing Escape).
+
+```gts
+import { tracked } from '@glimmer/tracking';
+import DragDrop from '@arthur5005/dnd-kit-ember/components/drag-drop';
+import { move } from '@dnd-kit/helpers';
+import type { DragDropEvents } from '@arthur5005/dnd-kit-ember';
+
+class State {
+  @tracked items = ['Item 1', 'Item 2', 'Item 3', 'Item 4'];
+  @tracked snapshot: string[] = [];
+}
+
+const state = new State();
+
+function handleDragStart() {
+  // Save snapshot for cancellation
+  state.snapshot = [...state.items];
+}
+
+function handleDragOver(event: Parameters<DragDropEvents['dragover']>[0]) {
+  // Optimistically reorder items as we drag
+  state.items = move(state.items, event);
+}
+
+function handleDragEnd(event: Parameters<DragDropEvents['dragend']>[0]) {
+  if (event.canceled) {
+    // Restore snapshot if cancelled (e.g., Escape key)
+    state.items = [...state.snapshot];
+  }
+}
+
+<template>
+  <DragDrop
+    @onDragStart={{handleDragStart}}
+    @onDragOver={{handleDragOver}}
+    @onDragEnd={{handleDragEnd}}
+    as |dd|
+  >
     <ul>
       {{#each state.items as |item index|}}
         <li {{dd.sortable id=item index=index}}>
@@ -54,7 +117,12 @@ function handleDragEnd(event: Parameters<DragDropEvents['dragend']>[0]) {
 ### Sortable with Drag Handles
 
 ```gts
-<DragDrop @onDragEnd={{handleDragEnd}} as |dd|>
+<DragDrop
+  @onDragStart={{handleDragStart}}
+  @onDragOver={{handleDragOver}}
+  @onDragEnd={{handleDragEnd}}
+  as |dd|
+>
   <ul>
     {{#each state.items as |item index|}}
       <li {{dd.sortable id=item index=index}}>
@@ -63,33 +131,6 @@ function handleDragEnd(event: Parameters<DragDropEvents['dragend']>[0]) {
       </li>
     {{/each}}
   </ul>
-</DragDrop>
-```
-
-### Draggable and Droppable
-
-```gts
-<DragDrop @onDragEnd={{handleDragEnd}} as |dd|>
-  <div {{dd.draggable id="item-1"}}>
-    Drag me
-  </div>
-
-  <div {{dd.droppable id="drop-zone"}}>
-    Drop here
-  </div>
-</DragDrop>
-```
-
-### Type-Restricted Drop Zones
-
-```gts
-<DragDrop @onDragEnd={{handleDragEnd}} as |dd|>
-  <div {{dd.draggable id="circle-1" type="circle"}}>Circle</div>
-  <div {{dd.draggable id="square-1" type="square"}}>Square</div>
-
-  <div {{dd.droppable id="circles-only" accept="circle"}}>
-    Only accepts circles
-  </div>
 </DragDrop>
 ```
 
@@ -118,21 +159,6 @@ The main component that sets up the drag and drop context.
 - `handle` - Designates a drag handle within a draggable or sortable
 
 Each modifier accepts additional options from dnd-kit. See the [dnd-kit documentation](https://next.dndkit.com/overview) for the full list of available options.
-
-## Event Structure
-
-Events provide access to the drag operation:
-
-```ts
-function handleDragEnd(event: Parameters<DragDropEvents['dragend']>[0]) {
-  const sourceId = event.operation.source?.id;
-  const targetId = event.operation.target?.id;
-
-  if (event.canceled) return;
-
-  // Handle the drop
-}
-```
 
 ## Learn More
 
