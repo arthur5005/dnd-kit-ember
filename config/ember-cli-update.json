@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectName": "dnd-kit-ember",
+  "projectName": "@arthur5005/dnd-kit-ember",
   "packages": [
     {
       "name": "@ember/addon-blueprint",

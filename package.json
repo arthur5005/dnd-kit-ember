@@ -1,12 +1,15 @@
 {
-  "name": "dnd-kit-ember",
-  "version": "0.0.0",
-  "description": "The default blueprint for Embroider v2 addons.",
+  "name": "@arthur5005/dnd-kit-ember",
+  "version": "0.1.0",
+  "description": "Ember addon for drag and drop powered by @dnd-kit/dom",
   "keywords": [
     "ember-addon"
   ],
   "repository": "",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "",
   "imports": {
     "#src/*": "./src/*"
@@ -43,11 +46,18 @@
     "lint:types": "ember-tsc --noEmit",
     "prepack": "rollup --config",
     "start": "vite dev",
-    "test": "vite build --mode=development --out-dir dist-tests && testem --file testem.cjs ci --port 0"
+    "test": "vite build --mode=development --out-dir dist-tests && testem --file testem.cjs ci --port 0",
+    "release": "release-it"
   },
   "dependencies": {
+    "@dnd-kit/abstract": "^0.2.3",
+    "@dnd-kit/dom": "^0.2.3",
+    "@dnd-kit/geometry": "^0.2.3",
+    "@dnd-kit/helpers": "^0.2.3",
+    "@dnd-kit/state": "^0.2.3",
     "@embroider/addon-shim": "^1.8.9",
-    "decorator-transforms": "^2.2.2"
+    "decorator-transforms": "^2.2.2",
+    "ember-modifier": "^4.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -88,8 +98,10 @@
     "publint": "^0.3.16",
     "qunit": "^2.24.1",
     "qunit-dom": "^3.4.0",
+    "release-it": "^19.2.4",
     "rollup": "^4.22.5",
     "testem": "^3.15.1",
+    "tracked-built-ins": "^4.1.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.19.1",
     "vite": "^7.1.9"
