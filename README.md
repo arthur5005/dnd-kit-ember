@@ -50,14 +50,16 @@ function handleDragEnd(event: Parameters<DragDropEvents['dragend']>[0]) {
 ### Type-Restricted Drop Zones
 
 ```gts
-<DragDrop @onDragEnd={{handleDragEnd}} as |dd|>
-  <div {{dd.draggable id="circle-1" type="circle"}}>Circle</div>
-  <div {{dd.draggable id="square-1" type="square"}}>Square</div>
+<template>
+  <DragDrop @onDragEnd={{handleDragEnd}} as |dd|>
+    <div {{dd.draggable id="circle-1" type="circle"}}>Circle</div>
+    <div {{dd.draggable id="square-1" type="square"}}>Square</div>
 
-  <div {{dd.droppable id="circles-only" accept="circle"}}>
-    Only accepts circles
-  </div>
-</DragDrop>
+    <div {{dd.droppable id="circles-only" accept="circle"}}>
+      Only accepts circles
+    </div>
+  </DragDrop>
+</template>
 ```
 
 ### Sortable List
@@ -117,21 +119,23 @@ function handleDragEnd(event: Parameters<DragDropEvents['dragend']>[0]) {
 ### Sortable with Drag Handles
 
 ```gts
-<DragDrop
-  @onDragStart={{handleDragStart}}
-  @onDragOver={{handleDragOver}}
-  @onDragEnd={{handleDragEnd}}
-  as |dd|
->
-  <ul>
-    {{#each state.items as |item index|}}
-      <li {{dd.sortable id=item index=index}}>
-        <span {{dd.handle}}>⠿</span>
-        {{item}}
-      </li>
-    {{/each}}
-  </ul>
-</DragDrop>
+<template>
+  <DragDrop
+    @onDragStart={{handleDragStart}}
+    @onDragOver={{handleDragOver}}
+    @onDragEnd={{handleDragEnd}}
+    as |dd|
+  >
+    <ul>
+      {{#each state.items as |item index|}}
+        <li {{dd.sortable id=item index=index}}>
+          <span {{dd.handle}}>⠿</span>
+          {{item}}
+        </li>
+      {{/each}}
+    </ul>
+  </DragDrop>
+</template>
 ```
 
 ## API
