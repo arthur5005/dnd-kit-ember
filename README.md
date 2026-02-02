@@ -129,7 +129,7 @@ function handleDragEnd(event: Parameters<DragDropEvents['dragend']>[0]) {
     <ul>
       {{#each state.items as |item index|}}
         <li {{dd.sortable id=item index=index}}>
-          <span {{dd.handle}}>⠿</span>
+          <span {{dd.handle id=item}}>⠿</span>
           {{item}}
         </li>
       {{/each}}
